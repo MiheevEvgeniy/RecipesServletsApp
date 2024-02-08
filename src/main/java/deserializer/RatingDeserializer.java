@@ -2,7 +2,6 @@ package deserializer;
 
 import com.google.gson.Gson;
 import model.Rating;
-import model.Recipe;
 
 public class RatingDeserializer {
     private final Gson gson;
