@@ -13,6 +13,13 @@ public class Recipe {
     public Recipe() {
     }
 
+    public Recipe(builder bd) {
+        this.id = bd.id;
+        this.title = bd.title;
+        this.description = bd.description;
+        this.ingredients = bd.ingredients;
+    }
+
     public Long getId() {
         return id;
     }
@@ -69,5 +76,39 @@ public class Recipe {
     @Override
     public int hashCode() {
         return Objects.hash(title, description, ingredients, id);
+    }
+
+    public static class builder {
+        private Long id;
+        private String title;
+        private String description;
+        private Map<String, String> ingredients;
+
+        public builder() {
+        }
+
+        public builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public builder title(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public builder ingredients(Map<String, String> ingredients) {
+            this.ingredients = ingredients;
+            return this;
+        }
+
+        public Recipe build() {
+            return new Recipe(this);
+        }
     }
 }

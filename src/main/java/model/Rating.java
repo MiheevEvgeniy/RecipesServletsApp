@@ -14,6 +14,12 @@ public class Rating {
     public Rating() {
     }
 
+    public Rating(builder bd) {
+        this.id = bd.id;
+        this.recipeId = bd.recipeId;
+        this.rating = bd.rating;
+    }
+
     public Long getId() {
         return id;
     }
@@ -58,5 +64,33 @@ public class Rating {
                 ", recipeId=" + recipeId +
                 ", rating=" + rating +
                 '}';
+    }
+
+    public static class builder {
+        private Long id;
+        private Long recipeId;
+        private RatingEnum rating;
+
+        public builder() {
+        }
+
+        public builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public builder recipeId(Long recipeId) {
+            this.recipeId = recipeId;
+            return this;
+        }
+
+        public builder rating(RatingEnum rating) {
+            this.rating = rating;
+            return this;
+        }
+
+        public Rating build() {
+            return new Rating(this);
+        }
     }
 }

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.List;
 
 @WebServlet("/rating/recipes/*")
 public class RatingServlet extends HttpServlet {
@@ -31,8 +32,9 @@ public class RatingServlet extends HttpServlet {
                 Rating rating = ratingDeserializer.deserialize(json);
 
                 Long recipeId = Long.valueOf(pathVar);
+                rating.setRecipeId(recipeId);
 
-                rating = service.addRating(rating, recipeId);
+                rating = service.addRating(rating);
 
                 if (rating == null) {
                     resp.setStatus(404);
@@ -56,7 +58,7 @@ public class RatingServlet extends HttpServlet {
             try {
                 Long recId = Long.valueOf(recipeId);
 
-                Rating rating = service.getRatingByRecipeId(recId);
+                List<Rating> rating = service.getRatingByRecipeId(recId);
                 if (rating == null) {
                     resp.setStatus(404);
                 } else {
@@ -68,6 +70,18 @@ public class RatingServlet extends HttpServlet {
                 System.out.println(Arrays.toString(e.getStackTrace()));
             }
         }
+    }
+
+    private void buildResponse(HttpServletResponse resp, List<Rating> entities) throws IOException {
+        resp.setContentType("text/html");
+        PrintWriter out = resp.getWriter();
+        out.println("<html><body>");
+        for (Rating rating : entities) {
+            out.println("<h1>" + rating.getRecipeId() + "</h1>");
+            out.println("<h2>" + rating.getRating() + "</h2>");
+            out.println("<hr>");
+        }
+        out.println("</body></html>");
     }
 
     private void buildResponse(HttpServletResponse resp, Rating entity) throws IOException {

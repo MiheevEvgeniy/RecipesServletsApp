@@ -1,23 +1,20 @@
 package service;
 
+import exceptions.NotFoundException;
 import model.Rating;
+import service.sql.SQLRatingService;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class RatingService {
-    private static final Map<Long, Rating> ratings = new HashMap<>();
-    private static long ratingIdCounter;
+    private static final SQLRatingService sqlService = new SQLRatingService();
 
-    public Rating addRating(Rating rating, Long recipeId) {
-        rating.setId(ratingIdCounter++);
-        rating.setRecipeId(recipeId);
-
-        ratings.put(rating.getRecipeId(), rating);
-        return rating;
+    public Rating addRating(Rating rating) {
+        return sqlService.addRating(rating)
+                .orElseThrow(() -> new NotFoundException("added rating not found"));
     }
 
-    public Rating getRatingByRecipeId(Long recipeId) {
-        return ratings.get(recipeId);
+    public List<Rating> getRatingByRecipeId(Long recipeId) {
+        return sqlService.findByRecipeId(recipeId);
     }
 }

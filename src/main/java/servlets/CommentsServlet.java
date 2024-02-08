@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.List;
 
 @WebServlet(value = "/comments/recipes/*")
 public class CommentsServlet extends HttpServlet {
@@ -20,7 +21,7 @@ public class CommentsServlet extends HttpServlet {
     private static final CommentsService service = new CommentsService();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) { // create new
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
         synchronized (this) {
             String[] paths = req.getPathInfo().split("/");
             String pathVar = paths[1];
@@ -31,8 +32,9 @@ public class CommentsServlet extends HttpServlet {
                 Comment comment = commentDeserializer.deserialize(json);
 
                 Long recipeId = Long.valueOf(pathVar);
+                comment.setRecipeId(recipeId);
 
-                comment = service.addComment(comment, recipeId);
+                comment = service.addComment(comment);
 
                 if (comment == null) {
                     resp.setStatus(404);
@@ -56,12 +58,12 @@ public class CommentsServlet extends HttpServlet {
             try {
                 Long recId = Long.valueOf(recipeId);
 
-                Comment comment = service.getCommentByRecipeId(recId);
+                List<Comment> comments = service.getCommentByRecipeId(recId);
 
-                if (comment == null) {
+                if (comments == null) {
                     resp.setStatus(404);
                 } else {
-                    buildResponse(resp, comment);
+                    buildResponse(resp, comments);
                     resp.setStatus(200);
                 }
             } catch (Exception e) {
@@ -79,6 +81,20 @@ public class CommentsServlet extends HttpServlet {
         out.println("<h2>" + entity.getContent() + "</h2>");
         out.println("<h3>" + entity.getRecipeId() + "</h3>");
         out.println("<h3>" + entity.getTimestamp() + "</h3>");
+        out.println("</body></html>");
+    }
+
+    private void buildResponse(HttpServletResponse resp, List<Comment> entities) throws IOException {
+        resp.setContentType("text/html");
+        PrintWriter out = resp.getWriter();
+        out.println("<html><body>");
+        for (Comment comment : entities) {
+            out.println("<h1>" + comment.getAuthor() + "</h1>");
+            out.println("<h2>" + comment.getContent() + "</h2>");
+            out.println("<h3>" + comment.getRecipeId() + "</h3>");
+            out.println("<h3>" + comment.getTimestamp() + "</h3>");
+            out.println("<hr>");
+        }
         out.println("</body></html>");
     }
 }

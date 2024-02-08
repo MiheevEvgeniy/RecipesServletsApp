@@ -18,6 +18,14 @@ public class Comment {
     public Comment() {
     }
 
+    public Comment(builder bd) {
+        this.id = bd.id;
+        this.recipeId = bd.recipeId;
+        this.author = bd.author;
+        this.timestamp = bd.timestamp;
+        this.content = bd.content;
+    }
+
     public Long getId() {
         return id;
     }
@@ -84,5 +92,45 @@ public class Comment {
                 ", timestamp=" + timestamp +
                 ", content='" + content + '\'' +
                 '}';
+    }
+
+    public static class builder {
+        private Long id;
+        private Long recipeId;
+        private String author;
+        private LocalDateTime timestamp;
+        private String content;
+
+        public builder() {
+        }
+
+        public builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public builder recipeId(Long recipeId) {
+            this.recipeId = recipeId;
+            return this;
+        }
+
+        public builder author(String author) {
+            this.author = author;
+            return this;
+        }
+
+        public builder timestamp(LocalDateTime timestamp) {
+            this.timestamp = timestamp;
+            return this;
+        }
+
+        public builder content(String content) {
+            this.content = content;
+            return this;
+        }
+
+        public Comment build() {
+            return new Comment(this);
+        }
     }
 }

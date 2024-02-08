@@ -1,24 +1,20 @@
 package service;
 
+import exceptions.NotFoundException;
 import model.Recipe;
+import service.sql.SQLRecipesService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RecipesService {
-    private static final Map<Long, Recipe> recipes = new HashMap<>();
-    private static long idCounter;
+    private static final SQLRecipesService sqlService = new SQLRecipesService();
 
     public Recipe addRecipe(Recipe recipe) {
-        recipe.setId(idCounter++);
-
-        recipes.put(recipe.getId(), recipe);
-        return recipe;
+        return sqlService.addRecipe(recipe)
+                .orElseThrow(() -> new NotFoundException("added recipe not found"));
     }
 
     public List<Recipe> getAll() {
-        return new ArrayList<>(recipes.values());
+        return sqlService.findAll();
     }
 }

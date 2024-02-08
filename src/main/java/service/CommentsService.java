@@ -1,24 +1,22 @@
 package service;
 
+import exceptions.NotFoundException;
 import model.Comment;
+import service.sql.SQLCommentsService;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class CommentsService {
-    private static final Map<Long, Comment> comments = new HashMap<>();
-    private static long commentIdCounter;
+    private static final SQLCommentsService sqlService = new SQLCommentsService();
 
-    public Comment addComment(Comment comment, Long recipeId) {
-        comment.setId(commentIdCounter++);
+    public Comment addComment(Comment comment) {
         comment.setTimestamp(LocalDateTime.now());
-        comment.setRecipeId(recipeId);
-        comments.put(comment.getRecipeId(), comment);
-        return comment;
+        return sqlService.addComment(comment)
+                .orElseThrow(() -> new NotFoundException("added comment not found"));
     }
 
-    public Comment getCommentByRecipeId(Long recipeId) {
-        return comments.get(recipeId);
+    public List<Comment> getCommentByRecipeId(Long recipeId) {
+        return sqlService.findByRecipeId(recipeId);
     }
 }
